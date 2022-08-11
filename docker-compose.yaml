@@ -1,11 +1,9 @@
 version: "3.9"
 
 services:
-  kafka:
-    image: "phhphc/kafka:latest"
+  kafka: # only run kafka-zookeeper by default, need to start kafka broker manually
+    build: .docker
     container_name: "kafka"
+    hostname: "localhost" # change to host-machine's hostname
     ports:
       - "9090-9099:9090-9099"
-    volumes:
-      - .:/home/user/learn-kafka
-    tty: true

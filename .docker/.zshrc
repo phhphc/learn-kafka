@@ -92,7 +92,7 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 configure_prompt() {
-    PROMPT=$'${debian_chroot:+($debian_chroot)}${VIRTUAL_ENV:+($(basename $VIRTUAL_ENV))}%B%F{%(#.red.green)}%n@%m:%~%b%F{reset}%(#.#.$) '
+    PROMPT=$'${debian_chroot:+($debian_chroot)}${VIRTUAL_ENV:+($(basename $VIRTUAL_ENV))}%B%F{green}%n@%m:%~%b%F{reset}$ '
     RPROMPT=
 }
 

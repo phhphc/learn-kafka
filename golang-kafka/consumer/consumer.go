@@ -11,7 +11,7 @@ import (
 /* read message using high level Reader, print message then commit offset */
 func main() {
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  []string{"localhost:9092"},
+		Brokers:  []string{":9092"},
 		GroupID:  "test-group",
 		Topic:    "first-topic",
 		MinBytes: 10e3,
@@ -23,6 +23,7 @@ func main() {
 	for {
 		m, err := r.FetchMessage(ctx)
 		if err != nil {
+			fmt.Print(err)
 			break
 		}
 
