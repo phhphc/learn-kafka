@@ -21,11 +21,14 @@ RUN apt-get install -y wget openjdk-11-jdk &&\
     echo "\n\nPATH=\$PATH:$(pwd)/kafka_2.13-3.2.1/bin" >> .zshrc
 
 # install common package
-RUN apt-get install -y neovim
+RUN apt-get install -y neovim procps net-tools golang
 
 # change default user
 WORKDIR /home/user/
 USER user
+
+# expose port
+EXPOSE 9090-9099
 
 # change default shell
 CMD [ "/bin/zsh" ]
