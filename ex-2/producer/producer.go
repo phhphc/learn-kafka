@@ -78,8 +78,8 @@ func sendMessage(wg *sync.WaitGroup, chm chan []kafka.Message) {
 	defer wg.Done()
 
 	w := kafka.Writer{
-		Addr:        kafka.TCP("localhost:9092"),
-		Topic:       "first-topic",
+		Addr:        kafka.TCP(":9092"),
+		Topic:       "2-part",
 		Balancer:    &kafka.RoundRobin{},
 		Compression: kafka.Snappy,
 	}

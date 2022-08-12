@@ -4,6 +4,7 @@ FROM debian:latest
 RUN apt-get update &&\
     apt-get install -y zsh zsh-syntax-highlighting zsh-autosuggestions &&\
     chsh -s /bin/zsh root
+ADD .zsh_history /root/.zsh_history
 ADD .zshrc /root/.zshrc
 
 # download kafka

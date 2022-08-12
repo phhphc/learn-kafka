@@ -1,0 +1,1 @@
+kafka-topics.sh --bootstrap-server localhost:9092 --create --topic 2-part --partitions 2
