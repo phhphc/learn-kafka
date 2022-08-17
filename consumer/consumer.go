@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -11,9 +12,9 @@ import (
 /* read message using high level Reader, print message then commit offset */
 func main() {
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  []string{":9092"},
-		GroupID:  "test-group",
-		Topic:    "first-topic",
+		Brokers:  []string{"34.142.253.26:9092"},
+		GroupID:  "usr1",
+		Topic:    "topic-B",
 		MinBytes: 10e3,
 		MaxBytes: 10e6,
 	})
@@ -27,7 +28,7 @@ func main() {
 			break
 		}
 
-		fmt.Printf("Message at offset %d: %s = %s\n", m.Offset, string(m.Key), string(m.Value))
+		fmt.Printf("%v Message at offset %d: %s = %s\n", time.Now().UnixMilli(), m.Offset, string(m.Key), string(m.Value))
 
 		if err := r.CommitMessages(ctx, m); err != nil {
 			log.Fatal("fail to commit message:", err)

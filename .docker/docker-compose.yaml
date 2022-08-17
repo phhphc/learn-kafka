@@ -1,0 +1,12 @@
+version: "3.9"
+
+# NOTE for windows user:
+# - change .docker/.zshrc and .docker/.zsh_history end of line sequence from CRLF to LF (if not zsh theme will take error)
+
+services:
+  kafka: # only run kafka-zookeeper by default, need to start kafka broker manually
+    build: .docker
+    container_name: "kafka"
+    hostname: "localhost" # change to host-machine's hostname
+    ports:
+      - "9090-9099:9090-9099"

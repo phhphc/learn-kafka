@@ -16,13 +16,17 @@ import (
 )
 
 var input = make(chan string)
+var username []byte
 
 func init() {
 	// push stdin's input to input channel
+	fmt.Print("Enter your username: ")
+	fmt.Scanln(&username)
+
+	r := bufio.NewReader(os.Stdin)
 	go func() {
 		fmt.Print(">> ")
 		for {
-			r := bufio.NewReader(os.Stdin)
 			text, err := r.ReadString('\n')
 			if err == io.EOF {
 				continue
@@ -43,7 +47,20 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
-	go sendMessage(&wg, chm)
+	w := kafka.Writer{
+		Addr:     kafka.TCP("34.142.253.26:9092"),
+		Topic:    "topic-B",
+		Balancer: &kafka.RoundRobin{},
+
+		Compression: kafka.Snappy,
+	}
+	defer func() {
+		if err := w.Close(); err != nil {
+			log.Fatal("Fail to close writer:", err)
+		}
+	}()
+
+	go sendMessage(&wg, w, chm)
 	go getMessage(ctx, &wg, chm)
 
 	func() {
@@ -61,7 +78,7 @@ func getMessage(ctx context.Context, wg *sync.WaitGroup, chm chan []kafka.Messag
 	for {
 		select {
 		case value := <-input:
-			messages = append(messages, kafka.Message{Value: []byte(value)})
+			messages = append(messages, kafka.Message{Value: []byte(value), Key: username})
 		case <-time.After(time.Second):
 			chm <- messages
 			messages = []kafka.Message{}
@@ -73,21 +90,9 @@ func getMessage(ctx context.Context, wg *sync.WaitGroup, chm chan []kafka.Messag
 	}
 }
 
-func sendMessage(wg *sync.WaitGroup, chm chan []kafka.Message) {
+func sendMessage(wg *sync.WaitGroup, w kafka.Writer, chm chan []kafka.Message) {
 	wg.Add(1)
 	defer wg.Done()
-
-	w := kafka.Writer{
-		Addr:        kafka.TCP("localhost:9092"),
-		Topic:       "first-topic",
-		Balancer:    &kafka.RoundRobin{},
-		Compression: kafka.Snappy,
-	}
-	defer func() {
-		if err := w.Close(); err != nil {
-			log.Fatal("Fail to close writer:", err)
-		}
-	}()
 
 	for messages := range chm {
 		err := w.WriteMessages(context.Background(), messages...)
